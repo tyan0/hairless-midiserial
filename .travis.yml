@@ -1,0 +1,57 @@
+language: c
+dist: xenial
+sudo: false
+matrix:
+  include:
+    - os: linux
+      env: TARGET=linux64
+    - os: linux
+      env: TARGET=linux32 PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig
+    # note: cross-build for win32 on osx as xenial's mingw-w64 compiler is too old to build working Qt apps,
+    # see https://forum.qt.io/topic/87793/qt-5-10-mingw64-static-building-failed
+    - os: osx
+      env: TARGET=win32
+    - os: osx
+      env: TARGET=macos
+env:
+  global:
+    - QTDIR=${TRAVIS_BUILD_DIR}/qt
+    - QTPKG=qt-everywhere-src-5.12.0
+    - QTURL="http://qt.mirror.constant.com/official_releases/qt/5.12/5.12.0/single/${QTPKG}.tar.xz"
+cache:
+  timeout: 1000
+  directories:
+    - ${QTDIR}
+addons:
+  artifacts:
+    paths:
+      - $(find . -maxdepth 1 -name 'hairless-midiserial*.zip' -o -name 'hairless-midiserial*.tgz' | tr "\n" ":")
+    target_paths:
+    - /travis_builds
+  homebrew:
+    packages:
+      - mingw-w64
+  apt:
+    packages:
+      - libsm-dev
+      - libasound2-dev
+      - libudev-dev
+      - fontconfig
+      - gettext
+      - gcc-multilib
+      - g++-multilib
+      - libasound2-dev:i386
+      - libudev-dev:i386
+      - libsm-dev:i386
+      - libfontconfig-dev:i386
+      - libstdc++6-4.7-dev:i386
+      - libxrender-dev:i386
+      - libxext-dev:i386
+before_install:
+  - test -x ${QTDIR}/bin/qmake || ci_build/build_qt_static.sh
+script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - ${QTDIR}/bin/qmake
+  - make
+  - ./ci_build/package_hairless.sh
+

@@ -1,0 +1,12 @@
+--- qt-everywhere-src-5.12.0-original/qtbase/src/corelib/global/qrandom.cpp	2018-12-03 22:15:26.000000000 +1100
++++ qt-everywhere-src-5.12.0/qtbase/src/corelib/global/qrandom.cpp	    2018-12-26 20:40:35.524830498 +1100
+@@ -90,7 +90,8 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-#if defined(Q_PROCESSOR_X86) && QT_COMPILER_SUPPORTS_HERE(RDRND)
++/* Note: RDRND disabled on Windows, workaround for https://bugreports.qt.io/browse/QTBUG-70487 */
++#if defined(Q_PROCESSOR_X86) && QT_COMPILER_SUPPORTS_HERE(RDRND) && !defined(Q_OS_WIN)
+ static qsizetype qt_random_cpu(void *buffer, qsizetype count) Q_DECL_NOTHROW;
+ 
+ #  ifdef Q_PROCESSOR_X86_64
