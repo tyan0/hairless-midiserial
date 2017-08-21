@@ -204,6 +204,7 @@ void MainWindow::onValueChanged()
     int midiIn =ui->cmbMidiIn->currentIndex()-1;
     int midiOut = ui->cmbMidiOut->currentIndex()-1;
     ui->lst_debug->addItem("Starting MIDI<->Serial Bridge...");
+    while (Bridge::the_bridge_on) QThread::msleep(1);
     bridge = new Bridge();
     connect(bridge, SIGNAL(debugMessage(QString)), SLOT(onDebugMessage(QString)));
     connect(bridge, SIGNAL(displayMessage(QString)), SLOT(onDisplayMessage(QString)));
@@ -248,9 +249,14 @@ void MainWindow::refreshDebugList()
 
 void MainWindow::resizeEvent(QResizeEvent *)
 {
+#ifdef Q_OS_WIN32
+    const int margin = 27;
+#else
+    const int margin = 20;
+#endif
     QListWidget *lst = ui->lst_debug;
     QRect geo = lst->geometry();
-    geo.setHeight( this->height() - geo.top() - 20 );
+    geo.setHeight( this->height() - geo.top() - margin );
     lst->setGeometry(geo);
 }
 

@@ -130,9 +130,9 @@ void SettingsDialog::accept()
 
 void SettingsDialog::resetSerialPort()
 {
-    selectByData(ui->cmb_baud, BAUD115200);
+    selectByData(ui->cmb_baud, BAUD38400);
     selectByData(ui->cmb_dataBits, DATA_8);
     selectByData(ui->cmb_parity, PAR_NONE);
     selectByData(ui->cmb_stop, STOP_1);
-    selectByData(ui->cmb_flow, FLOW_OFF);
+    selectByData(ui->cmb_flow, FLOW_HARDWARE);
 }
