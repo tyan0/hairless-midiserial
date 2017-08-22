@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPreferences, SIGNAL(triggered()), SLOT(showPreferences()));
 
     // Get started
-    onValueChanged();
+    startBridge();
 
 #ifdef Q_OS_MAC
     // hack: avoid an empty dummy File menu on OS X
@@ -98,20 +98,7 @@ void MainWindow::showAboutBox()
     AboutDialog().exec();
 }
 
-bool MainWindow::eventFilter(QObject *object, QEvent *event) {
-    // If user is triggering a dropdown, refresh it live
-    if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::KeyPress) {
-        if(object == ui->cmbMidiIn) {
-            RtMidiIn in;
-            refreshMidi(ui->cmbMidiIn, &in);
-        } else if (object == ui->cmbMidiOut) {
-            RtMidiOut out;
-            refreshMidi(ui->cmbMidiOut, &out);
-        }
-        else if (object == ui->cmbSerial) {
-            refreshSerial();
-        }
-    }
+bool MainWindow::eventFilter(QObject *, QEvent *) {
     return false;
 }
 
@@ -183,14 +170,8 @@ void MainWindow::onDebugClicked(bool value)
     Settings::setDebug(value);
 }
 
-void MainWindow::onValueChanged()
+void MainWindow::startBridge()
 {
-    if(bridge) {
-        bridge->deleteLater();
-        QThread::yieldCurrentThread(); // Try and get any signals from the bridge sent sooner not later
-        QCoreApplication::processEvents();
-        bridge = NULL;
-    }
     Settings::setLastMidiIn(ui->cmbMidiIn->currentText());
     Settings::setLastMidiOut(ui->cmbMidiOut->currentText());
     Settings::setLastSerialPort(ui->cmbSerial->currentText());
@@ -200,11 +181,11 @@ void MainWindow::onValueChanged()
                     && ui->cmbMidiOut->currentIndex() == 0 )) {
         return;
     }
+    refreshDebugList();
     ui->lst_debug->clear();
     int midiIn =ui->cmbMidiIn->currentIndex()-1;
     int midiOut = ui->cmbMidiOut->currentIndex()-1;
     ui->lst_debug->addItem("Starting MIDI<->Serial Bridge...");
-    while (Bridge::the_bridge_on) QThread::msleep(1);
     bridge = new Bridge();
     connect(bridge, SIGNAL(debugMessage(QString)), SLOT(onDebugMessage(QString)));
     connect(bridge, SIGNAL(displayMessage(QString)), SLOT(onDisplayMessage(QString)));
@@ -212,6 +193,19 @@ void MainWindow::onValueChanged()
     connect(bridge, SIGNAL(midiSent()), ui->led_midiout, SLOT(blinkOn()));
     connect(bridge, SIGNAL(serialTraffic()), ui->led_serial, SLOT(blinkOn()));
     bridge->attach(ui->cmbSerial->itemData(ui->cmbSerial->currentIndex()).toString(), Settings::getPortSettings(), midiIn, midiOut, workerThread);
+}
+
+void MainWindow::onValueChanged()
+{
+    if(bridge) {
+        connect(bridge, SIGNAL(destroyed()), this, SLOT(startBridge()));
+        bridge->deleteLater();
+        QThread::yieldCurrentThread(); // Try and get any signals from the bridge sent sooner not later
+        QCoreApplication::processEvents();
+        bridge = NULL;
+    } else {
+        startBridge();
+    }
 }
 
 void MainWindow::onDisplayMessage(QString message)

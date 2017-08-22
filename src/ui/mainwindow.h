@@ -53,6 +53,7 @@ private slots:
     void refreshDebugList();
     void showPreferences();
     void showAboutBox();
+    void startBridge();
 };
 
 #endif // MAINWINDOW_H

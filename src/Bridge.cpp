@@ -29,8 +29,6 @@ inline bool is_voice_msg(uint8_t tag) { return tag >= 0x80 && tag <= 0xEF; };
 inline bool is_syscommon_msg(uint8_t tag) { return tag >= 0xF0 && tag <= 0xF7; };
 inline bool is_realtime_msg(uint8_t tag) { return tag >= 0xF8 && tag < 0xFF; };
 
-volatile bool Bridge::the_bridge_on = false;
-
 // return the number of data bytes for a given message status byte
 #define UNKNOWN_MIDI -2
 static int get_data_length(int status) {
@@ -77,7 +75,6 @@ Bridge::Bridge() :
         latency(NULL),
         attachTime(QTime::currentTime())
 {
-    the_bridge_on = true;
 }
 
 void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInPort, int midiOutPort, QThread *workerThread)
@@ -141,7 +138,6 @@ Bridge::~Bridge()
     delete this->midiIn;
     delete this->midiOut;
     delete this->serial;
-    the_bridge_on = false;
 }
 
 void Bridge::onMidiIn(double timeStamp, QByteArray message)
