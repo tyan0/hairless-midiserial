@@ -34,7 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 
     // Plumb event filter for focus events
-    ui->cmbMidiIn->installEventFilter(this);
+    ui->cmbMidiIn1->installEventFilter(this);
+    ui->cmbMidiIn2->installEventFilter(this);
+    ui->cmbMidiIn3->installEventFilter(this);
+    ui->cmbMidiIn4->installEventFilter(this);
+    ui->cmbMidiIn5->installEventFilter(this);
+    ui->cmbMidiIn6->installEventFilter(this);
     ui->cmbMidiOut->installEventFilter(this);
     ui->cmbSerial->installEventFilter(this);
 
@@ -44,7 +49,12 @@ MainWindow::MainWindow(QWidget *parent) :
     refresh();
     scrollbackSize=Settings::getScrollbackSize();
     ui->chk_debug->setChecked( Settings::getDebug() );
-    selectIfAvailable(ui->cmbMidiIn, Settings::getLastMidiIn());
+    selectIfAvailable(ui->cmbMidiIn1, Settings::getLastMidiIn1());
+    selectIfAvailable(ui->cmbMidiIn2, Settings::getLastMidiIn2());
+    selectIfAvailable(ui->cmbMidiIn3, Settings::getLastMidiIn3());
+    selectIfAvailable(ui->cmbMidiIn4, Settings::getLastMidiIn4());
+    selectIfAvailable(ui->cmbMidiIn5, Settings::getLastMidiIn5());
+    selectIfAvailable(ui->cmbMidiIn6, Settings::getLastMidiIn6());
     selectIfAvailable(ui->cmbMidiOut, Settings::getLastMidiOut());
     selectIfAvailable(ui->cmbSerial, Settings::getLastSerialPort());
 
@@ -53,7 +63,12 @@ MainWindow::MainWindow(QWidget *parent) :
     debugListTimer.setInterval(1000 / LIST_REFRESH_RATE);
 
     // Plumb signals & slots
-    connect(ui->cmbMidiIn, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
+    connect(ui->cmbMidiIn1, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
+    connect(ui->cmbMidiIn2, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
+    connect(ui->cmbMidiIn3, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
+    connect(ui->cmbMidiIn4, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
+    connect(ui->cmbMidiIn5, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
+    connect(ui->cmbMidiIn6, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
     connect(ui->cmbMidiOut, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
     connect(ui->cmbSerial, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
     connect(ui->chk_on, SIGNAL(clicked()), SLOT(onValueChanged()));
@@ -112,7 +127,12 @@ void MainWindow::refresh()
 void MainWindow::refreshMidiIn()
 {
     RtMidiIn in = RtMidiIn();
-    refreshMidi(ui->cmbMidiIn, &in);
+    refreshMidi(ui->cmbMidiIn1, &in);
+    refreshMidi(ui->cmbMidiIn2, &in);
+    refreshMidi(ui->cmbMidiIn3, &in);
+    refreshMidi(ui->cmbMidiIn4, &in);
+    refreshMidi(ui->cmbMidiIn5, &in);
+    refreshMidi(ui->cmbMidiIn6, &in);
 }
 
 void MainWindow::refreshMidiOut()
@@ -172,27 +192,47 @@ void MainWindow::onDebugClicked(bool value)
 
 void MainWindow::startBridge()
 {
-    Settings::setLastMidiIn(ui->cmbMidiIn->currentText());
+    Settings::setLastMidiIn1(ui->cmbMidiIn1->currentText());
+    Settings::setLastMidiIn2(ui->cmbMidiIn2->currentText());
+    Settings::setLastMidiIn3(ui->cmbMidiIn3->currentText());
+    Settings::setLastMidiIn4(ui->cmbMidiIn4->currentText());
+    Settings::setLastMidiIn5(ui->cmbMidiIn5->currentText());
+    Settings::setLastMidiIn6(ui->cmbMidiIn6->currentText());
     Settings::setLastMidiOut(ui->cmbMidiOut->currentText());
     Settings::setLastSerialPort(ui->cmbSerial->currentText());
     if(!ui->chk_on->isChecked()
             || ( ui->cmbSerial->currentIndex() == 0
-                    && ui->cmbMidiIn->currentIndex() == 0
+                    && ui->cmbMidiIn1->currentIndex() == 0
+                    && ui->cmbMidiIn2->currentIndex() == 0
+                    && ui->cmbMidiIn3->currentIndex() == 0
+                    && ui->cmbMidiIn4->currentIndex() == 0
+                    && ui->cmbMidiIn5->currentIndex() == 0
+                    && ui->cmbMidiIn6->currentIndex() == 0
                     && ui->cmbMidiOut->currentIndex() == 0 )) {
         return;
     }
     refreshDebugList();
     ui->lst_debug->clear();
-    int midiIn =ui->cmbMidiIn->currentIndex()-1;
+    int midiIn1 =ui->cmbMidiIn1->currentIndex()-1;
+    int midiIn2 =ui->cmbMidiIn2->currentIndex()-1;
+    int midiIn3 =ui->cmbMidiIn3->currentIndex()-1;
+    int midiIn4 =ui->cmbMidiIn4->currentIndex()-1;
+    int midiIn5 =ui->cmbMidiIn5->currentIndex()-1;
+    int midiIn6 =ui->cmbMidiIn6->currentIndex()-1;
     int midiOut = ui->cmbMidiOut->currentIndex()-1;
     ui->lst_debug->addItem("Starting MIDI<->Serial Bridge...");
     bridge = new Bridge();
     connect(bridge, SIGNAL(debugMessage(QString)), SLOT(onDebugMessage(QString)));
     connect(bridge, SIGNAL(displayMessage(QString)), SLOT(onDisplayMessage(QString)));
-    connect(bridge, SIGNAL(midiReceived()), ui->led_midiin, SLOT(blinkOn()));
+    connect(bridge, SIGNAL(midiReceived1()), ui->led_midiin1, SLOT(blinkOn()));
+    connect(bridge, SIGNAL(midiReceived2()), ui->led_midiin2, SLOT(blinkOn()));
+    connect(bridge, SIGNAL(midiReceived3()), ui->led_midiin3, SLOT(blinkOn()));
+    connect(bridge, SIGNAL(midiReceived4()), ui->led_midiin4, SLOT(blinkOn()));
+    connect(bridge, SIGNAL(midiReceived5()), ui->led_midiin5, SLOT(blinkOn()));
+    connect(bridge, SIGNAL(midiReceived6()), ui->led_midiin6, SLOT(blinkOn()));
     connect(bridge, SIGNAL(midiSent()), ui->led_midiout, SLOT(blinkOn()));
     connect(bridge, SIGNAL(serialTraffic()), ui->led_serial, SLOT(blinkOn()));
-    bridge->attach(ui->cmbSerial->itemData(ui->cmbSerial->currentIndex()).toString(), Settings::getPortSettings(), midiIn, midiOut, workerThread);
+    bridge->attach(ui->cmbSerial->itemData(ui->cmbSerial->currentIndex()).toString(), Settings::getPortSettings(), midiIn1, midiIn2, midiIn3, midiIn4, midiIn5, midiIn6, midiOut, workerThread);
 }
 
 void MainWindow::onValueChanged()

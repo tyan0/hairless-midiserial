@@ -69,15 +69,22 @@ Bridge::Bridge() :
         running_status(0),
         data_expected(0),
         msg_data(),
-        midiIn(NULL),
+        midiIn1(NULL),
+        midiIn2(NULL),
+        midiIn3(NULL),
+        midiIn4(NULL),
+        midiIn5(NULL),
+        midiIn6(NULL),
         midiOut(NULL),
         serial(NULL),
         latency(NULL),
-        attachTime(QTime::currentTime())
+        attachTime(QTime::currentTime()),
+        lastMidiInPort(0),
+        lastMidiInTime(0)
 {
 }
 
-void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInPort, int midiOutPort, QThread *workerThread)
+void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInPort1, int midiInPort2, int midiInPort3, int midiInPort4, int midiInPort5, int midiInPort6, int midiOutPort, QThread *workerThread)
 {
     this->moveToThread(workerThread);
     if(serialName.length() && serialName != TEXT_NOT_CONNECTED) {
@@ -111,16 +118,96 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
         displayMessage(QString("Failed to open MIDI out port: %1").arg(QString::fromStdString(e.getMessage())));
     }
 
-    // MIDI in
+    // MIDI in 1
     try
     {
-       if(midiInPort > -1) {
-            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort));
-            this->midiInPort = midiInPort;
-            this->midiIn = new QRtMidiIn(NAME_MIDI_IN);
-            this->midiIn->moveToThread(workerThread);
-            this->midiIn->openPort(midiInPort);
-            connect(this->midiIn, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn(double,QByteArray)));
+       if(midiInPort1 > -1) {
+            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort1));
+            this->midiInPort1 = midiInPort1;
+            this->midiIn1 = new QRtMidiIn(NAME_MIDI_IN1);
+            this->midiIn1->moveToThread(workerThread);
+            this->midiIn1->openPort(midiInPort1);
+            connect(this->midiIn1, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn1(double,QByteArray)));
+        }
+     }
+    catch(RtMidiError e)
+    {
+        displayMessage(QString("Failed to open MIDI in port: %1").arg(QString::fromStdString(e.getMessage())));
+    }
+    // MIDI in 2
+    try
+    {
+       if(midiInPort2 > -1) {
+            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort2));
+            this->midiInPort2 = midiInPort2;
+            this->midiIn2 = new QRtMidiIn(NAME_MIDI_IN2);
+            this->midiIn2->moveToThread(workerThread);
+            this->midiIn2->openPort(midiInPort2);
+            connect(this->midiIn2, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn2(double,QByteArray)));
+        }
+     }
+    catch(RtMidiError e)
+    {
+        displayMessage(QString("Failed to open MIDI in port: %1").arg(QString::fromStdString(e.getMessage())));
+    }
+    // MIDI in 3
+    try
+    {
+       if(midiInPort3 > -1) {
+            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort3));
+            this->midiInPort3 = midiInPort3;
+            this->midiIn3 = new QRtMidiIn(NAME_MIDI_IN3);
+            this->midiIn3->moveToThread(workerThread);
+            this->midiIn3->openPort(midiInPort3);
+            connect(this->midiIn3, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn3(double,QByteArray)));
+        }
+     }
+    catch(RtMidiError e)
+    {
+        displayMessage(QString("Failed to open MIDI in port: %1").arg(QString::fromStdString(e.getMessage())));
+    }
+    // MIDI in 4
+    try
+    {
+       if(midiInPort4 > -1) {
+            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort4));
+            this->midiInPort4 = midiInPort4;
+            this->midiIn4 = new QRtMidiIn(NAME_MIDI_IN4);
+            this->midiIn4->moveToThread(workerThread);
+            this->midiIn4->openPort(midiInPort4);
+            connect(this->midiIn4, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn4(double,QByteArray)));
+        }
+     }
+    catch(RtMidiError e)
+    {
+        displayMessage(QString("Failed to open MIDI in port: %1").arg(QString::fromStdString(e.getMessage())));
+    }
+    // MIDI in 5
+    try
+    {
+       if(midiInPort5 > -1) {
+            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort5));
+            this->midiInPort5 = midiInPort5;
+            this->midiIn5 = new QRtMidiIn(NAME_MIDI_IN5);
+            this->midiIn5->moveToThread(workerThread);
+            this->midiIn5->openPort(midiInPort5);
+            connect(this->midiIn5, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn5(double,QByteArray)));
+        }
+     }
+    catch(RtMidiError e)
+    {
+        displayMessage(QString("Failed to open MIDI in port: %1").arg(QString::fromStdString(e.getMessage())));
+    }
+    // MIDI in 6
+    try
+    {
+       if(midiInPort6 > -1) {
+            emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort6));
+            this->midiInPort6 = midiInPort6;
+            this->midiIn6 = new QRtMidiIn(NAME_MIDI_IN6);
+            this->midiIn6->moveToThread(workerThread);
+            this->midiIn6->openPort(midiInPort6);
+            connect(this->midiIn6, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn6(double,QByteArray)));
         }
      }
     catch(RtMidiError e)
@@ -135,19 +222,93 @@ Bridge::~Bridge()
     if(this->latency) {
         this->latency->resetLatency();
     }
-    delete this->midiIn;
+    delete this->midiIn1;
+    delete this->midiIn2;
+    delete this->midiIn3;
+    delete this->midiIn4;
+    delete this->midiIn5;
+    delete this->midiIn6;
     delete this->midiOut;
     delete this->serial;
 }
 
-void Bridge::onMidiIn(double timeStamp, QByteArray message)
+void Bridge::onMidiIn(int port, QByteArray message)
 {
+    QTime now = QTime::currentTime();
+    double secs = this->attachTime.msecsTo(now) / 1000.0;
     QString description = describeMIDI(message);
-    emit debugMessage(applyTimeStamp(QString("MIDI In: %1").arg(description)));
-    emit midiReceived();
+    emit debugMessage(applyTimeStamp(QString("MIDI In %1: %2").arg(port).arg(description)));
+    midiReceived(port);
     if(serial && serial->isOpen()) {
+        mutex_serialWrite.lock();
+        if (secs - lastMidiInTime > 0.1 || lastMidiInPort != port) {
+            QByteArray msgPortChange;
+            msgPortChange.resize(2);
+            /* 0xF5 is reserved but used as port change message
+               by Roland and YAMAHA on serial MIDI  */
+            msgPortChange[0] = 0xF5;
+            msgPortChange[1] = port;
+            serial->write(msgPortChange);
+        }
         serial->write(message);
         emit serialTraffic();
+        lastMidiInPort = port;
+        lastMidiInTime = secs;
+        mutex_serialWrite.unlock();
+    }
+}
+
+void Bridge::onMidiIn1(double, QByteArray message)
+{
+    onMidiIn(1, message);
+}
+
+void Bridge::onMidiIn2(double, QByteArray message)
+{
+    onMidiIn(2, message);
+}
+
+void Bridge::onMidiIn3(double, QByteArray message)
+{
+    onMidiIn(3, message);
+}
+
+void Bridge::onMidiIn4(double, QByteArray message)
+{
+    onMidiIn(4, message);
+}
+
+void Bridge::onMidiIn5(double, QByteArray message)
+{
+    onMidiIn(5, message);
+}
+
+void Bridge::onMidiIn6(double, QByteArray message)
+{
+    onMidiIn(6, message);
+}
+
+void Bridge::midiReceived(int port)
+{
+    switch (port) {
+    case 1:
+        emit midiReceived1();
+        break;
+    case 2:
+        emit midiReceived2();
+        break;
+    case 3:
+        emit midiReceived3();
+        break;
+    case 4:
+        emit midiReceived4();
+        break;
+    case 5:
+        emit midiReceived5();
+        break;
+    case 6:
+        emit midiReceived6();
+        break;
     }
 }
 

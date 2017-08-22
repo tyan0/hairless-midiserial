@@ -12,8 +12,18 @@ public:
     static QString getLastSerialPort() { return QSettings().value("lastSerialPort", "").toString(); }
     static void setLastSerialPort(QString port) { QSettings().setValue("lastSerialPort", port); }
 
-    static QString getLastMidiIn() { return QSettings().value("lastMidiIn", "").toString(); }
-    static void setLastMidiIn(QString port) { QSettings().setValue("lastMidiIn", port); }
+    static QString getLastMidiIn1() { return QSettings().value("lastMidiIn1", "").toString(); }
+    static QString getLastMidiIn2() { return QSettings().value("lastMidiIn2", "").toString(); }
+    static QString getLastMidiIn3() { return QSettings().value("lastMidiIn3", "").toString(); }
+    static QString getLastMidiIn4() { return QSettings().value("lastMidiIn4", "").toString(); }
+    static QString getLastMidiIn5() { return QSettings().value("lastMidiIn5", "").toString(); }
+    static QString getLastMidiIn6() { return QSettings().value("lastMidiIn6", "").toString(); }
+    static void setLastMidiIn1(QString port) { QSettings().setValue("lastMidiIn1", port); }
+    static void setLastMidiIn2(QString port) { QSettings().setValue("lastMidiIn2", port); }
+    static void setLastMidiIn3(QString port) { QSettings().setValue("lastMidiIn3", port); }
+    static void setLastMidiIn4(QString port) { QSettings().setValue("lastMidiIn4", port); }
+    static void setLastMidiIn5(QString port) { QSettings().setValue("lastMidiIn5", port); }
+    static void setLastMidiIn6(QString port) { QSettings().setValue("lastMidiIn6", port); }
 
     static QString getLastMidiOut() { return QSettings().value("lastMidiOut", "").toString(); }
     static void setLastMidiOut(QString port) { QSettings().setValue("lastMidiOut", port); }
