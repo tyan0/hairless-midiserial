@@ -238,11 +238,12 @@ void MainWindow::startBridge()
 void MainWindow::onValueChanged()
 {
     if(bridge) {
-        connect(bridge, SIGNAL(destroyed()), this, SLOT(startBridge()));
-        bridge->deleteLater();
+        Bridge *old_bridge = bridge;
+        bridge = NULL;
+        connect(old_bridge, SIGNAL(destroyed()), this, SLOT(startBridge()));
+        old_bridge->deleteLater();
         QThread::yieldCurrentThread(); // Try and get any signals from the bridge sent sooner not later
         QCoreApplication::processEvents();
-        bridge = NULL;
     } else {
         startBridge();
     }
