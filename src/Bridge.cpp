@@ -229,7 +229,18 @@ Bridge::~Bridge()
     delete this->midiIn5;
     delete this->midiIn6;
     delete this->midiOut;
+    /*
+       Set flow control off before delete. Destructer of QextSerialPort
+       calls flush_sys(), but it never returns if the following conditions
+       are met.
+          (1) Hardware flow control is set.
+          (2) Serial cable is disconnected.
+          (3) Buffer is not empty.
+    */
+    if (this->serial) this->serial->setFlowControl(FLOW_OFF);
     delete this->serial;
+    /* Closing serial port takes a while. */
+    QThread::msleep(50);
 }
 
 void Bridge::onMidiIn(int port, QByteArray message)
@@ -382,7 +393,12 @@ void Bridge::sendMidiMessage() {
       emit debugMessage(applyTimeStamp(QString("Serial In: %1").arg(describeMIDI(msg_data))));
       if(midiOut) {
         std::vector<uint8_t> message = std::vector<uint8_t>(msg_data.begin(), msg_data.end());
-        midiOut->sendMessage(&message);
+        try {
+          midiOut->sendMessage(&message);
+        }
+        catch (RtMidiError e) {
+          debugMessage(applyTimeStamp(QString("MIDI out failes: %1").arg(QString::fromStdString(e.getMessage()))));
+        }
         emit midiSent();
       }
   }
