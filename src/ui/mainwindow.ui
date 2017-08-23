@@ -408,6 +408,11 @@
   <tabstop>cmbSerial</tabstop>
   <tabstop>cmbMidiOut</tabstop>
   <tabstop>cmbMidiIn1</tabstop>
+  <tabstop>cmbMidiIn2</tabstop>
+  <tabstop>cmbMidiIn3</tabstop>
+  <tabstop>cmbMidiIn4</tabstop>
+  <tabstop>cmbMidiIn5</tabstop>
+  <tabstop>cmbMidiIn6</tabstop>
   <tabstop>chk_debug</tabstop>
   <tabstop>lst_debug</tabstop>
  </tabstops>
