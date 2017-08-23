@@ -38,6 +38,7 @@ private:
     int scrollbackSize;
     QTimer debugListTimer;
     QStringList debugListMessages;
+    bool pendingStartBridge;
 
     void refresh();
     void refreshSerial();

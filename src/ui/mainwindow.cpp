@@ -23,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     bridge(NULL),
     workerThread(NULL),
     debugListTimer(),
-    debugListMessages()
+    debugListMessages(),
+    pendingStartBridge(false)
 {
     ui->setupUi(this);
     // Fixed width, minimum height
@@ -209,6 +210,7 @@ void MainWindow::startBridge()
                     && ui->cmbMidiIn5->currentIndex() == 0
                     && ui->cmbMidiIn6->currentIndex() == 0
                     && ui->cmbMidiOut->currentIndex() == 0 )) {
+        pendingStartBridge = false;
         return;
     }
     refreshDebugList();
@@ -233,11 +235,14 @@ void MainWindow::startBridge()
     connect(bridge, SIGNAL(midiSent()), ui->led_midiout, SLOT(blinkOn()));
     connect(bridge, SIGNAL(serialTraffic()), ui->led_serial, SLOT(blinkOn()));
     bridge->attach(ui->cmbSerial->itemData(ui->cmbSerial->currentIndex()).toString(), Settings::getPortSettings(), midiIn1, midiIn2, midiIn3, midiIn4, midiIn5, midiIn6, midiOut, workerThread);
+    pendingStartBridge = false;
 }
 
 void MainWindow::onValueChanged()
 {
+    if (pendingStartBridge) return;
     if(bridge) {
+        pendingStartBridge = true;
         Bridge *old_bridge = bridge;
         bridge = NULL;
         connect(old_bridge, SIGNAL(destroyed()), this, SLOT(startBridge()));
