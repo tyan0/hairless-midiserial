@@ -232,6 +232,7 @@ Bridge::~Bridge()
     if(this->latency) {
         this->latency->resetLatency();
     }
+    delete this->latency;
     delete this->midiIn1;
     delete this->midiIn2;
     delete this->midiIn3;
