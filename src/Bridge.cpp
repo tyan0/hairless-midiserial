@@ -25,8 +25,6 @@ const uint8_t MSG_SYSEX_END = 0xF7;
 
 const uint8_t MSG_DEBUG = 0xFF; // special ttymidi "debug output" MIDI message tag
 
-static const int retryCountOpenSerial = 20;
-
 inline bool is_voice_msg(uint8_t tag) { return tag >= 0x80 && tag <= 0xEF; };
 inline bool is_syscommon_msg(uint8_t tag) { return tag >= 0xF0 && tag <= 0xF7; };
 inline bool is_realtime_msg(uint8_t tag) { return tag >= 0xF8 && tag < 0xFF; };
@@ -99,12 +97,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
         emit displayMessage(QString("Opening serial port '%1'...").arg(serialName));
         this->serial = new QextSerialPort(serialName, serialSettings);
         connect(this->serial, SIGNAL(readyRead()), this, SLOT(onSerialAvailable()));
-        bool res;
-        for (int i=0; i<retryCountOpenSerial; i++) {
-            res = this->serial->open(QIODevice::ReadWrite|QIODevice::Unbuffered);
-            if (res) break;
-            QThread::msleep(1);
-        }
+        bool res = this->serial->open(QIODevice::ReadWrite|QIODevice::Unbuffered);
         if (!res) {
             displayMessage(QString("Failed to open serial port '%1'").arg(serialName));
         }
