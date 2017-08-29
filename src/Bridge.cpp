@@ -84,9 +84,8 @@ Bridge::Bridge() :
 {
 }
 
-void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInPort1, int midiInPort2, int midiInPort3, int midiInPort4, int midiInPort5, int midiInPort6, int midiOutPort, QThread *workerThread)
+void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInPort1, int midiInPort2, int midiInPort3, int midiInPort4, int midiInPort5, int midiInPort6, int midiOutPort)
 {
-    this->moveToThread(workerThread);
     if(serialName.length() && serialName != TEXT_NOT_CONNECTED) {
         // Latency fixups
         latency = new PortLatency(serialName);
@@ -97,12 +96,10 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
         emit displayMessage(QString("Opening serial port '%1'...").arg(serialName));
         this->serial = new QextSerialPort(serialName, serialSettings);
         connect(this->serial, SIGNAL(readyRead()), this, SLOT(onSerialAvailable()));
-        bool res = this->serial->open(QIODevice::ReadWrite|QIODevice::Unbuffered);
-        if (!res) {
+        if (! this->serial->open(QIODevice::ReadWrite|QIODevice::Unbuffered)) {
             displayMessage(QString("Failed to open serial port '%1'").arg(serialName));
         }
         attachTime = QTime::currentTime();
-        this->serial->moveToThread(workerThread);
     }
 
     // MIDI out
@@ -128,7 +125,6 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort1));
             this->midiInPort1 = midiInPort1;
             this->midiIn1 = new QRtMidiIn(NAME_MIDI_IN1);
-            this->midiIn1->moveToThread(workerThread);
             this->midiIn1->openPort(midiInPort1);
             connect(this->midiIn1, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn1(double,QByteArray)));
         }
@@ -144,7 +140,6 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort2));
             this->midiInPort2 = midiInPort2;
             this->midiIn2 = new QRtMidiIn(NAME_MIDI_IN2);
-            this->midiIn2->moveToThread(workerThread);
             this->midiIn2->openPort(midiInPort2);
             connect(this->midiIn2, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn2(double,QByteArray)));
         }
@@ -160,7 +155,6 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort3));
             this->midiInPort3 = midiInPort3;
             this->midiIn3 = new QRtMidiIn(NAME_MIDI_IN3);
-            this->midiIn3->moveToThread(workerThread);
             this->midiIn3->openPort(midiInPort3);
             connect(this->midiIn3, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn3(double,QByteArray)));
         }
@@ -176,7 +170,6 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort4));
             this->midiInPort4 = midiInPort4;
             this->midiIn4 = new QRtMidiIn(NAME_MIDI_IN4);
-            this->midiIn4->moveToThread(workerThread);
             this->midiIn4->openPort(midiInPort4);
             connect(this->midiIn4, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn4(double,QByteArray)));
         }
@@ -192,7 +185,6 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort5));
             this->midiInPort5 = midiInPort5;
             this->midiIn5 = new QRtMidiIn(NAME_MIDI_IN5);
-            this->midiIn5->moveToThread(workerThread);
             this->midiIn5->openPort(midiInPort5);
             connect(this->midiIn5, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn5(double,QByteArray)));
         }
@@ -208,7 +200,6 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort6));
             this->midiInPort6 = midiInPort6;
             this->midiIn6 = new QRtMidiIn(NAME_MIDI_IN6);
-            this->midiIn6->moveToThread(workerThread);
             this->midiIn6->openPort(midiInPort6);
             connect(this->midiIn6, SIGNAL(messageReceived(double,QByteArray)), this, SLOT(onMidiIn6(double,QByteArray)));
         }
@@ -241,7 +232,9 @@ Bridge::~Bridge()
           (2) Serial cable is disconnected.
           (3) Buffer is not empty.
     */
-    if (this->serial) this->serial->setFlowControl(FLOW_OFF);
+    if (this->serial) {
+        this->serial->setFlowControl(FLOW_OFF);
+    }
     delete this->serial;
 }
 

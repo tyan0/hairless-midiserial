@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPreferences, SIGNAL(triggered()), SLOT(showPreferences()));
 
     // Get started
+    qRegisterMetaType<PortSettings>("PortSettings");
     startBridge();
 
 #ifdef Q_OS_MAC
@@ -224,6 +225,7 @@ void MainWindow::startBridge()
     int midiOut = ui->cmbMidiOut->currentIndex()-1;
     ui->lst_debug->addItem("Starting MIDI<->Serial Bridge...");
     bridge = new Bridge();
+    bridge->moveToThread(workerThread);
     connect(bridge, SIGNAL(debugMessage(QString)), SLOT(onDebugMessage(QString)));
     connect(bridge, SIGNAL(displayMessage(QString)), SLOT(onDisplayMessage(QString)));
     connect(bridge, SIGNAL(midiReceived1()), ui->led_midiin1, SLOT(blinkOn()));
@@ -234,21 +236,30 @@ void MainWindow::startBridge()
     connect(bridge, SIGNAL(midiReceived6()), ui->led_midiin6, SLOT(blinkOn()));
     connect(bridge, SIGNAL(midiSent()), ui->led_midiout, SLOT(blinkOn()));
     connect(bridge, SIGNAL(serialTraffic()), ui->led_serial, SLOT(blinkOn()));
-    bridge->attach(ui->cmbSerial->itemData(ui->cmbSerial->currentIndex()).toString(), Settings::getPortSettings(), midiIn1, midiIn2, midiIn3, midiIn4, midiIn5, midiIn6, midiOut, workerThread);
+    QMetaObject::invokeMethod(bridge, "attach", Qt::QueuedConnection,
+        Q_ARG(QString, ui->cmbSerial->itemData(ui->cmbSerial->currentIndex()).toString()),
+        Q_ARG(PortSettings, Settings::getPortSettings()),
+        Q_ARG(int, midiIn1),
+        Q_ARG(int, midiIn2),
+        Q_ARG(int, midiIn3),
+        Q_ARG(int, midiIn4),
+        Q_ARG(int, midiIn5),
+        Q_ARG(int, midiIn6),
+        Q_ARG(int, midiOut) );
     pendingStartBridge = false;
 }
 
 void MainWindow::onValueChanged()
 {
-    if (pendingStartBridge) return;
+    while (pendingStartBridge) {
+        QCoreApplication::processEvents();
+    }
     if(bridge) {
         pendingStartBridge = true;
         Bridge *old_bridge = bridge;
         bridge = NULL;
         connect(old_bridge, SIGNAL(destroyed()), this, SLOT(startBridge()));
         old_bridge->deleteLater();
-        QThread::yieldCurrentThread(); // Try and get any signals from the bridge sent sooner not later
-        QCoreApplication::processEvents();
     } else {
         startBridge();
     }
@@ -289,7 +300,7 @@ void MainWindow::refreshDebugList()
 
 void MainWindow::resizeEvent(QResizeEvent *)
 {
-#ifdef Q_OS_WIN32
+#if defined(Q_OS_WIN32) || defined(Q_OS_UNIX)
     const int margin = 27;
 #else
     const int margin = 20;

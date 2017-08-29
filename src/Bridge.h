@@ -34,7 +34,6 @@ class Bridge : public QObject
     Q_OBJECT
 public:
     explicit Bridge();
-    void attach(QString serialName, PortSettings serialSettings, int midiInPort1, int midiInPort2, int midiInPort3, int midiInPort4, int midiInPort5, int midiInPort6, int midiOutPort, QThread *workerThread);
 
     // Destroying an existing Bridge will cleanup state & release all ports
     ~Bridge();
@@ -54,6 +53,7 @@ signals:
     void midiSent();
     void serialTraffic();
 private slots:
+    void attach(QString serialName, PortSettings serialSettings, int midiInPort1, int midiInPort2, int midiInPort3, int midiInPort4, int midiInPort5, int midiInPort6, int midiOutPort);
     void onMidiIn1(double timeStamp, QByteArray message);
     void onMidiIn2(double timeStamp, QByteArray message);
     void onMidiIn3(double timeStamp, QByteArray message);
