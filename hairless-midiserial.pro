@@ -98,7 +98,7 @@ SOURCES +=    libraries/rtmidi/RtMidi.cpp \
 INCLUDEPATH += libraries/rtmidi/
 
 linux-* { # linux doesn't get picked up, not sure what else to use
-  DEFINES += __LINUX_ALSASEQ__
+  DEFINES += __LINUX_ALSA__ QESP_NO_UDEV
   CONFIG += link_pkgconfig x11
   PKGCONFIG += alsa
   LIBS += -lpthread
