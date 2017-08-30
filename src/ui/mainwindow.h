@@ -36,6 +36,7 @@ private:
     QTimer debugListTimer;
     QStringList debugListMessages;
     volatile bool pendingStartBridge;
+    bool disableOnValueChanged;
 
     void refresh();
     void refreshSerial();

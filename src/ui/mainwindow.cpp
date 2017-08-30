@@ -24,7 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     workerThread(NULL),
     debugListTimer(),
     debugListMessages(),
-    pendingStartBridge(false)
+    pendingStartBridge(false),
+    disableOnValueChanged(false)
 {
     ui->setupUi(this);
     // Fixed width, minimum height
@@ -115,7 +116,36 @@ void MainWindow::showAboutBox()
     AboutDialog().exec();
 }
 
-bool MainWindow::eventFilter(QObject *, QEvent *) {
+bool MainWindow::eventFilter(QObject *object, QEvent *event) {
+    // If user is triggering a dropdown, refresh it live
+    if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::KeyPress) {
+        disableOnValueChanged = true;
+        if (object == ui->cmbMidiIn1) {
+            RtMidiIn in;
+            refreshMidi(ui->cmbMidiIn1, &in);
+        } else if (object == ui->cmbMidiIn2) {
+            RtMidiIn in;
+            refreshMidi(ui->cmbMidiIn2, &in);
+        } else if (object == ui->cmbMidiIn3) {
+            RtMidiIn in;
+            refreshMidi(ui->cmbMidiIn3, &in);
+        } else if (object == ui->cmbMidiIn4) {
+            RtMidiIn in;
+            refreshMidi(ui->cmbMidiIn4, &in);
+        } else if (object == ui->cmbMidiIn5) {
+            RtMidiIn in;
+            refreshMidi(ui->cmbMidiIn5, &in);
+        } else if (object == ui->cmbMidiIn6) {
+            RtMidiIn in;
+            refreshMidi(ui->cmbMidiIn6, &in);
+        } else if (object == ui->cmbMidiOut) {
+            RtMidiOut out;
+            refreshMidi(ui->cmbMidiOut, &out);
+        } else if (object == ui->cmbSerial) {
+            refreshSerial();
+        }
+        disableOnValueChanged = false;
+    }
     return false;
 }
 
@@ -251,6 +281,7 @@ void MainWindow::startBridge()
 
 void MainWindow::onValueChanged()
 {
+    if (disableOnValueChanged) return;
     while (pendingStartBridge) {
         QCoreApplication::processEvents();
     }
