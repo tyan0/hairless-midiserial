@@ -331,14 +331,9 @@ void MainWindow::refreshDebugList()
 
 void MainWindow::resizeEvent(QResizeEvent *)
 {
-#if defined(Q_OS_WIN32) || defined(Q_OS_UNIX)
-    const int margin = 27;
-#else
-    const int margin = 20;
-#endif
-    QListWidget *lst = ui->lst_debug;
-    QRect geo = lst->geometry();
-    geo.setHeight( this->height() - geo.top() - margin );
-    lst->setGeometry(geo);
+    const int margin = 5;
+    QRect geo = ui->lst_debug->geometry();
+    geo.setBottom(ui->centralWidget->height() - margin);
+    ui->lst_debug->setGeometry(geo);
 }
 
