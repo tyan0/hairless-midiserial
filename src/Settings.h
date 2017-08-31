@@ -34,6 +34,9 @@ public:
     static bool getDebug() { return QSettings().value("debug", false).toBool(); }
     static void setDebug(bool debug) { QSettings().setValue("debug", debug); }
 
+    static bool getMultiport() { return QSettings().value("multiport", false).toBool(); }
+    static void setMultiport(bool multiport) { QSettings().setValue("multiport", multiport); }
+
     static PortSettings getPortSettings() {
         PortSettings result;
         QSettings settings;

@@ -45,12 +45,28 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->cmbMidiOut->installEventFilter(this);
     ui->cmbSerial->installEventFilter(this);
 
+    // Multiport ON, OFF
+    stretchSize = ui->cmbMidiIn6->pos() - ui->cmbMidiIn1->pos() - QPoint(0,15);
+    ui->chk_multiport->setChecked(true);
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->cmbMidiIn2, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->cmbMidiIn3, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->cmbMidiIn4, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->cmbMidiIn5, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->cmbMidiIn6, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->led_midiin2, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->led_midiin3, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->led_midiin4, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->led_midiin5, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), ui->led_midiin6, SLOT(setVisible(bool)));
+    connect(ui->chk_multiport, SIGNAL(toggled(bool)), this, SLOT(stretchWindow(bool)));
+
     // Load initial state
     this->workerThread = new QThread();
     this->workerThread->start(QThread::HighestPriority);
     refresh();
     scrollbackSize=Settings::getScrollbackSize();
     ui->chk_debug->setChecked( Settings::getDebug() );
+    ui->chk_multiport->setChecked( Settings::getMultiport() );
     selectIfAvailable(ui->cmbMidiIn1, Settings::getLastMidiIn1());
     selectIfAvailable(ui->cmbMidiIn2, Settings::getLastMidiIn2());
     selectIfAvailable(ui->cmbMidiIn3, Settings::getLastMidiIn3());
@@ -75,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cmbSerial, SIGNAL(currentIndexChanged(int)), SLOT(onValueChanged()));
     connect(ui->chk_on, SIGNAL(clicked()), SLOT(onValueChanged()));
     connect(ui->chk_debug, SIGNAL(clicked(bool)), SLOT(onDebugClicked(bool)));
+    connect(ui->chk_multiport, SIGNAL(clicked(bool)), SLOT(onMultiportClicked(bool)));
     connect(&debugListTimer, SIGNAL(timeout()), SLOT(refreshDebugList()));
 
 
@@ -222,6 +239,12 @@ void MainWindow::onDebugClicked(bool value)
     Settings::setDebug(value);
 }
 
+void MainWindow::onMultiportClicked(bool value)
+{
+    Settings::setMultiport(value);
+    onValueChanged();
+}
+
 void MainWindow::startBridge()
 {
     Settings::setLastMidiIn1(ui->cmbMidiIn1->currentText());
@@ -254,7 +277,7 @@ void MainWindow::startBridge()
     int midiIn6 =ui->cmbMidiIn6->currentIndex()-1;
     int midiOut = ui->cmbMidiOut->currentIndex()-1;
     ui->lst_debug->addItem("Starting MIDI<->Serial Bridge...");
-    bridge = new Bridge();
+    bridge = new Bridge(ui->chk_multiport->isChecked());
     bridge->moveToThread(workerThread);
     connect(bridge, SIGNAL(debugMessage(QString)), SLOT(onDebugMessage(QString)));
     connect(bridge, SIGNAL(displayMessage(QString)), SLOT(onDisplayMessage(QString)));
@@ -337,3 +360,18 @@ void MainWindow::resizeEvent(QResizeEvent *)
     ui->lst_debug->setGeometry(geo);
 }
 
+void MainWindow::stretchWindow(bool multiport)
+{
+    QSize stretchSize2 = QSize(stretchSize.x(), stretchSize.y());
+    if (multiport) {
+        ui->chk_debug->move(ui->chk_debug->pos() + stretchSize);
+        ui->lst_debug->move(ui->lst_debug->pos() + stretchSize);
+        this->resize(this->size() + stretchSize2);
+        this->setMinimumSize(this->minimumSize() + stretchSize2);
+    } else {
+        ui->chk_debug->move(ui->chk_debug->pos() - stretchSize);
+        ui->lst_debug->move(ui->lst_debug->pos() - stretchSize);
+        this->setMinimumSize(this->minimumSize() - stretchSize2);
+        this->resize(this->size() - stretchSize2);
+    }
+}

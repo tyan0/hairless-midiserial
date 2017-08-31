@@ -64,7 +64,7 @@ static int get_data_length(int status) {
 }
 
 
-Bridge::Bridge() :
+Bridge::Bridge(bool multiport_) :
         QObject(),      
         running_status(0),
         data_expected(0),
@@ -79,6 +79,7 @@ Bridge::Bridge() :
         serial(NULL),
         latency(NULL),
         attachTime(QTime::currentTime()),
+        multiport(multiport_),
         lastMidiInPort(0),
         lastMidiInTime(0)
 {
@@ -136,7 +137,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
     // MIDI in 2
     try
     {
-       if(midiInPort2 > -1) {
+       if(midiInPort2 > -1 && multiport) {
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort2));
             this->midiInPort2 = midiInPort2;
             this->midiIn2 = new QRtMidiIn(NAME_MIDI_IN2);
@@ -151,7 +152,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
     // MIDI in 3
     try
     {
-       if(midiInPort3 > -1) {
+       if(midiInPort3 > -1 && multiport) {
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort3));
             this->midiInPort3 = midiInPort3;
             this->midiIn3 = new QRtMidiIn(NAME_MIDI_IN3);
@@ -166,7 +167,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
     // MIDI in 4
     try
     {
-       if(midiInPort4 > -1) {
+       if(midiInPort4 > -1 && multiport) {
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort4));
             this->midiInPort4 = midiInPort4;
             this->midiIn4 = new QRtMidiIn(NAME_MIDI_IN4);
@@ -181,7 +182,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
     // MIDI in 5
     try
     {
-       if(midiInPort5 > -1) {
+       if(midiInPort5 > -1 && multiport) {
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort5));
             this->midiInPort5 = midiInPort5;
             this->midiIn5 = new QRtMidiIn(NAME_MIDI_IN5);
@@ -196,7 +197,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
     // MIDI in 6
     try
     {
-       if(midiInPort6 > -1) {
+       if(midiInPort6 > -1 && multiport) {
             emit displayMessage(QString("Opening MIDI In port #%1").arg(midiInPort6));
             this->midiInPort6 = midiInPort6;
             this->midiIn6 = new QRtMidiIn(NAME_MIDI_IN6);
@@ -213,6 +214,9 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
 Bridge::~Bridge()
 {
     emit displayMessage(applyTimeStamp("Closing MIDI<->Serial bridge..."));
+    /* Send active sensing message to port 1
+       in order to reset the port to 1. */
+    onMidiIn(1, "\xFE");
     if(this->latency) {
         this->latency->resetLatency();
     }
@@ -247,13 +251,11 @@ void Bridge::onMidiIn(int port, QByteArray message)
     midiReceived(port);
     if(serial && serial->isOpen()) {
         mutex_serialWrite.lock();
-        if (secs - lastMidiInTime > 0.1 || lastMidiInPort != port) {
-            QByteArray msgPortChange;
-            msgPortChange.resize(2);
+        if ( multiport && (secs - lastMidiInTime > 0.1 || lastMidiInPort != port)) {
             /* 0xF5 is reserved but used as port change message
                by Roland and YAMAHA on serial MIDI  */
-            msgPortChange[0] = 0xF5;
-            msgPortChange[1] = port;
+            QByteArray msgPortChange = "\xF5";
+            msgPortChange.append((char)port);
             serial->write(msgPortChange);
         }
         serial->write(message);

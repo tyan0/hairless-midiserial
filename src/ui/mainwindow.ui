@@ -24,7 +24,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
+      <y>347</y>
       <width>591</width>
       <height>81</height>
      </rect>
@@ -94,7 +94,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>320</y>
+      <y>315</y>
       <width>201</width>
       <height>22</height>
      </rect>
@@ -349,6 +349,19 @@
      <pixmap resource="../../resources.qrc">:/images/images/led-off.png</pixmap>
     </property>
    </widget>
+   <widget class="QCheckBox" name="chk_multiport">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>101</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Multiport</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -405,6 +418,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>chk_on</tabstop>
+  <tabstop>chk_multiport</tabstop>
   <tabstop>cmbSerial</tabstop>
   <tabstop>cmbMidiOut</tabstop>
   <tabstop>cmbMidiIn1</tabstop>

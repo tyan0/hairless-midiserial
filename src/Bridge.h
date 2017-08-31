@@ -33,7 +33,7 @@ class Bridge : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bridge();
+    explicit Bridge(bool multiport);
 
     // Destroying an existing Bridge will cleanup state & release all ports
     ~Bridge();
@@ -95,6 +95,7 @@ private:
     void onMidiIn(int port, QByteArray message);
     void midiReceived(int port);
     QMutex mutex_serialWrite;
+    bool multiport;
     int lastMidiInPort;
     double lastMidiInTime;
 };

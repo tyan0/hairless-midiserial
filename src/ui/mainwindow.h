@@ -37,6 +37,7 @@ private:
     QStringList debugListMessages;
     volatile bool pendingStartBridge;
     bool disableOnValueChanged;
+    QPoint stretchSize;
 
     void refresh();
     void refreshSerial();
@@ -49,10 +50,12 @@ private slots:
     void onDisplayMessage(QString message);
     void onDebugMessage(QString message);
     void onDebugClicked(bool value);
+    void onMultiportClicked(bool value);
     void refreshDebugList();
     void showPreferences();
     void showAboutBox();
     void startBridge();
+    void stretchWindow(bool multiport);
 };
 
 #endif // MAINWINDOW_H
