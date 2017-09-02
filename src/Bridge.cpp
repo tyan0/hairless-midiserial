@@ -100,6 +100,7 @@ void Bridge::attach(QString serialName, PortSettings serialSettings, int midiInP
         if (! this->serial->open(QIODevice::ReadWrite|QIODevice::Unbuffered)) {
             displayMessage(QString("Failed to open serial port '%1'").arg(serialName));
         }
+        serial->setRts(true);
         attachTime = QTime::currentTime();
     }
 
