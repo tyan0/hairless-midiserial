@@ -1,0 +1,25 @@
+--- libraries/qextserialport/src/qextserialport_unix.cpp
++++ libraries/qextserialport/src/qextserialport_unix_patched.cpp
+@@ -109,7 +109,8 @@ bool QextSerialPortPrivate::close_sys()
+     // Force a flush and then restore the original termios
+     flush_sys();
+     // Using both TCSAFLUSH and TCSANOW here discards any pending input
+-    ::tcsetattr(fd, TCSAFLUSH | TCSANOW, &oldTermios);   // Restore termios
++    ::tcsetattr(fd, TCSANOW, &oldTermios);   // Restore termios
++    ::tcflush(fd, TCIOFLUSH);
+     ::close(fd);
+     if (readNotifier) {
+         delete readNotifier;
+@@ -437,8 +438,10 @@ void QextSerialPortPrivate::updatePortSettings()
+     }
+ 
+     /*if any thing in currentTermios changed, flush*/
+-    if (settingsDirtyFlags & DFE_Settings_Mask)
+-        ::tcsetattr(fd, TCSAFLUSH, &currentTermios);
++    if (settingsDirtyFlags & DFE_Settings_Mask) {
++        ::tcsetattr(fd, TCSANOW, &currentTermios);
++        ::tcflush(fd, TCIOFLUSH);
++    }
+ 
+     if (settingsDirtyFlags & DFE_TimeOut) {
+         int millisec = settings.Timeout_Millisec;
