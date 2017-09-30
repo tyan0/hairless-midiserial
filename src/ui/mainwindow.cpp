@@ -115,10 +115,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    QEventLoop w;
-    connect(bridge, SIGNAL(destroyed()), &w, SLOT(quit()));
-    bridge->deleteLater();
-    w.exec();
+    if (bridge) {
+        QEventLoop w;
+        connect(bridge, SIGNAL(destroyed()), &w, SLOT(quit()));
+        bridge->deleteLater();
+        w.exec();
+    }
     delete ui;
 }
 
