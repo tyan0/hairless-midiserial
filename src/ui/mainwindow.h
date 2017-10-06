@@ -38,6 +38,9 @@ private:
     volatile bool pendingStartBridge;
     bool disableOnValueChanged;
     QPoint stretchSize;
+#if defined(__MACOSX_CORE__)
+    RtMidiIn *dummyMidiIn;
+#endif
 
     void refresh();
     void refreshSerial();

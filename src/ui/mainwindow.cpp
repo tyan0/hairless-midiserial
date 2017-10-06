@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
     pendingStartBridge(false),
     disableOnValueChanged(false)
 {
+#if defined(__MACOSX_CORE__)
+    dummyMidiIn = new RtMidiIn;
+#endif
     ui->setupUi(this);
     // Fixed width, minimum height
     this->setMinimumSize(this->size());
@@ -122,6 +125,9 @@ MainWindow::~MainWindow()
         w.exec();
     }
     delete ui;
+#if defined(__MACOSX_CORE__)
+    delete dummyMidiIn;
+#endif
 }
 
 void MainWindow::showPreferences()
