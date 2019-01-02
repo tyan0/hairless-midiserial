@@ -5,8 +5,58 @@ matrix:
   include:
     - os: linux
       env: TARGET=linux64
+      addons:
+        apt:
+          packages:
+            - fontconfig
+            - gettext
+            - libasound2-dev
+            - libbz2-dev
+            - libexpat1-dev
+            - libfontconfig1-dev
+            - libfreetype6-dev
+            - libgraphite2-dev
+            - libharfbuzz-dev
+            - libice-dev
+            - libicu-dev
+            - libjpeg8-dev
+            - libpcre2-dev
+            - libpng-dev
+            - libsm-dev
+            - libudev-dev
+            - libxau-dev
+            - libxcb1-dev
+            - libxdmcp-dev
+            - uuid-dev
+            - zlib1g-dev
     - os: linux
       env: TARGET=linux32 PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig
+      addons:
+        apt:
+          packages:
+            - fontconfig
+            - gettext
+            - gcc-multilib
+            - g++-multilib
+            - libasound2-dev:i386
+            - libbz2-dev:i386
+            - libexpat1-dev:i386
+            - libfontconfig1-dev:i386
+            - libfreetype6-dev:i386
+            - libgraphite2-dev:i386
+            - libharfbuzz-dev:i386
+            - libice-dev:i386
+            - libicu-dev:i386
+            - libjpeg8-dev:i386
+            - libpcre2-dev:i386
+            - libpng-dev:i386
+            - libsm-dev:i386
+            - libudev-dev:i386
+            - libxau-dev:i386
+            - libxcb1-dev:i386
+            - libxdmcp-dev:i386
+            - uuid-dev:i386
+            - zlib1g-dev:i386
     # note: cross-build for win32 on osx as xenial's mingw-w64 compiler is too old to build working Qt apps,
     # see https://forum.qt.io/topic/87793/qt-5-10-mingw64-static-building-failed
     - os: osx
@@ -31,51 +81,6 @@ addons:
   homebrew:
     packages:
       - mingw-w64
-  apt:
-    packages:
-      - gettext
-      - gcc-multilib
-      - g++-multilib
-      - fontconfig
-      - libsm-dev
-      - libasound2-dev
-      - libudev-dev
-      - libgraphite2-dev
-      - libjpeg8-dev
-      - libpng16-dev
-      - libxcb1-dev
-      - libice-dev
-      - libicu-dev
-      - zlib1g-dev
-      - libbz2-dev
-      - libfontconfig1-dev
-      - libharfbuzz-dev
-      - libpcre2-dev
-      - libexpat1-dev
-      - libxau-dev
-      - libxdmcp-dev
-      - uuid-dev
-      - libasound2-dev:i386
-      - libudev-dev:i386
-      - libgraphite2-dev:i386
-      - libjpeg8-dev:i386
-      - libpng16-dev:i386
-      - libxcb1-dev:i386
-      - libice-dev:i386
-      - libicu-dev:i386
-      - zlib1g-dev:i386
-      - libbz2-dev:i386
-      - libsm-dev:i386
-      - libfontconfig1-dev:i386
-      - libharfbuzz-dev:i386
-      - libstdc++6-4.7-dev:i386
-      - libxrender-dev:i386
-      - libxext-dev:i386
-      - libpcre2-dev:i386
-      - libexpat1-dev:i386
-      - libxau-dev:i386
-      - libxdmcp-dev:i386
-      - uuid-dev:i386
 before_install:
   - test -x ${QTDIR}/bin/qmake || ci_build/build_qt_static.sh
 script:
