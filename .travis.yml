@@ -33,20 +33,49 @@ addons:
       - mingw-w64
   apt:
     packages:
-      - libsm-dev
-      - libasound2-dev
-      - libudev-dev
-      - fontconfig
       - gettext
       - gcc-multilib
       - g++-multilib
+      - fontconfig
+      - libsm-dev
+      - libasound2-dev
+      - libudev-dev
+      - libgraphite2-dev
+      - libjpeg8-dev
+      - libpng16-dev
+      - libxcb1-dev
+      - libice-dev
+      - libicu-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libfontconfig1-dev
+      - libharfbuzz-dev
+      - libpcre2-dev
+      - libexpat1-dev
+      - libxau-dev
+      - libxdmcp-dev
+      - uuid-dev
       - libasound2-dev:i386
       - libudev-dev:i386
+      - libgraphite2-dev:i386
+      - libjpeg8-dev:i386
+      - libpng16-dev:i386
+      - libxcb1-dev:i386
+      - libice-dev:i386
+      - libicu-dev:i386
+      - zlib1g-dev:i386
+      - libbz2-dev:i386
       - libsm-dev:i386
-      - libfontconfig-dev:i386
+      - libfontconfig1-dev:i386
+      - libharfbuzz-dev:i386
       - libstdc++6-4.7-dev:i386
       - libxrender-dev:i386
       - libxext-dev:i386
+      - libpcre2-dev:i386
+      - libexpat1-dev:i386
+      - libxau-dev:i386
+      - libxdmcp-dev:i386
+      - uuid-dev:i386
 before_install:
   - test -x ${QTDIR}/bin/qmake || ci_build/build_qt_static.sh
 script:
