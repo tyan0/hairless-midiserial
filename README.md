@@ -1,22 +1,28 @@
-Hairless MIDI<->Serial Bridge is the easiest way to connect serial devices (like Arduinos) to send and receive MIDI signals.
+# What is this?
 
-The project home page is http://projectgus.github.com/hairless-midiserial/
+This is a fork from [Hairless MIDI<->Serial Bridge](http://projectgus.github.com/hairless-midiserial/). While the purpose of the original Hairless MIDI<->Serial Bridge is to connect serial devices like Arduinos, this fork aims to connect MIDI sound module such as Roland Sound Canvas seriese and YAMAHA MU seriese via serial port.
 
-Please see that page for information on running and using Hairless Midiserial, and downloadable compiled versions for Windows, OS X and Linux.
+Roland Sound Canvas seriese and YAMAHA MU seriese support controlling multi-port(16 parts per port) via single serial port connection. So this fork adds support for the multi-port.
+
+Hairless MIDI<->Serial Bridge assumes to be used with virtual MIDI ports.
+You can use [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) to create virtual MIDI ports.
+
+The flow of the MIDI signal is as follows.
+[MIDI Application]->[loopMIDI]->[Hairless MIDI<->Serial Bridge]->(Serial port)->[MIDI Sound Module]
 
 # Building Hairless Bridge from source
 
-(Note again, prebuilt versions *are available for download* at the above URL.)
-
 Hairless uses git submodules for library dependencies, so you should use `git clone --recursive URL` when cloning from Github. Alternatively, you can run `git submodule update --init` in order to fetch the submodules to an already-cloned directory.
 
-Hairless Midiserial Bridge release 0.4 was built with Qt 4.7.3. It's also been built and run under Qt 4.7.4 & 4.8.6. Newer Qt version 5.0 will probably require code changes in order to compile and/or run.
+This fork of Hairless Midiserial Bridge can be built with Qt4 or Qt5.
 
 The Qt package should contain all dependencies, the graphical IDE "Qt Creator" or the program "qmake" can be used to compile the project hairless-midiserial.pro.
 
-On Windows I recommend building with the [MingGW compiler](http://www.mingw.org/), Visual Studio has not been tested. Neither the MinGW site nor Qt's new owners Digia still distribute older MinGW builds, and MinGW 4.7 is too new for precompiled Qt 4.7.x, so it can be a bit hard to find a prebuilt combination that work. Recently I downloaded `mingw-static-4.4.5-all.7z` from [this Google Code project](https://code.google.com/p/qp-gcc/downloads/list), and can confirm that works.
+On Windows I recommend building with the [MingGW compiler](http://www.mingw.org/). I use MinGW compiler under [MSYS2](https://msys2.github.io/).
 
-(For the Windows release builds I actually [cross-build under Linux using wine, as described here](http://projectgus.com/2011/09/developing-qt-apps-for-windows-using-linux-wine/).)
+To build Hailess MIDI<->Serial Bridge, follow the steps:
+* qmake
+* make all
 
 # Libraries
 
