@@ -5,7 +5,8 @@ This is a fork from [Hairless MIDI<->Serial Bridge](http://projectgus.github.com
 Roland Sound Canvas seriese and YAMAHA MU seriese support controlling multi-port (16 parts per port) via single serial port connection. So this fork adds support for the multi-port.
 
 Hairless MIDI<->Serial Bridge assumes to be used with virtual MIDI ports.
-You can use [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) to create virtual MIDI ports.
+In Windows, you can use [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) to create virtual MIDI ports.
+In OS X, use IAC Driver. For Linux, MIDI Through port, such as `14:0 Midi Through` can be used.
 
 The flow of the MIDI signal is as follows.
 
