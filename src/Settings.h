@@ -40,9 +40,9 @@ public:
     static PortSettings getPortSettings() {
         PortSettings result;
         QSettings settings;
-        result.BaudRate = (BaudRateType) settings.value("baudRate", (int)BAUD115200).toInt();
+        result.BaudRate = (BaudRateType) settings.value("baudRate", (int)BAUD38400).toInt();
         result.DataBits = (DataBitsType) settings.value("dataBits", (int)DATA_8).toInt();
-        result.FlowControl = (FlowType)  settings.value("flowControl", (int)FLOW_OFF).toInt();
+        result.FlowControl = (FlowType)  settings.value("flowControl", (int)FLOW_HARDWARE).toInt();
         result.Parity = (ParityType) settings.value("parity", (int)PAR_NONE).toInt();
         result.StopBits = (StopBitsType) settings.value("stopBits", (int)STOP_1).toInt();
         result.Timeout_Millisec = -1; // not used when qextserialport is event-driven, anyhow
