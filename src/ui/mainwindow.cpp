@@ -211,7 +211,7 @@ void MainWindow::refreshMidi(QComboBox *combo, RtMidi *midi)
       int ports = midi->getPortCount();
       combo->addItem(TEXT_NOT_CONNECTED);
       for (int i = 0; i < ports; i++ ) {
-        QString name = QString::fromStdString(midi->getPortName(i));
+        QString name = QString::fromUtf8(midi->getPortName(i).c_str());
         combo->addItem(name);
             if(current == name) {
                 combo->setCurrentIndex(combo->count() - 1);
