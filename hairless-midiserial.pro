@@ -15,10 +15,6 @@ DEFINES +=APPNAME=\"hairless-midiserial\"
 DEFINES += VERSION=\'\"0.4\"\'
 DEFINES += MODIFY=\'\"6\"\'
 
-macx {
-  DEFINES += UNICODE
-}
-
 # Main Program
 
 SOURCES += \
@@ -97,12 +93,10 @@ INCLUDEPATH += libraries/qextserialport/src/
 
 # RtMidi
 
-system(patch -s -o libraries/rtmidi/RtMidi_patched.cpp libraries/rtmidi/RtMidi.cpp patch/RtMidi.patch)
-
 HEADERS +=    libraries/rtmidi/RtMidi.h \
               src/QRtMidiIn.h \
 
-SOURCES +=    libraries/rtmidi/RtMidi_patched.cpp \
+SOURCES +=    libraries/rtmidi/RtMidi.cpp \
               src/QRtMidiIn.cpp
 
 INCLUDEPATH += libraries/rtmidi/
