@@ -71,8 +71,8 @@ SOURCES                 += libraries/qextserialport/src/qextserialport.cpp \
                            libraries/qextserialport/src/qextserialenumerator.cpp
 
 unix {
-  system(patch -s -o libraries/qextserialport/src/qextserialport_unix_patched.cpp libraries/qextserialport/src/qextserialport_unix.cpp patch/qextserialport_unix.patch)
-  SOURCES += libraries/qextserialport/src/qextserialport_unix_patched.cpp
+  system(patch -s -o qextserialport_unix_patched.cpp libraries/qextserialport/src/qextserialport_unix.cpp patch/qextserialport_unix.patch)
+  SOURCES += qextserialport_unix_patched.cpp
 }
 unix:!macx:SOURCES     += libraries/qextserialport/src/qextserialenumerator_linux.cpp
 unix:!macx:LIBS        += -ludev

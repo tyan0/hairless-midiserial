@@ -7,3 +7,4 @@ hairless-midiserial
 *~
 Makefile
 *#
+qextserialport_unix_patched.cpp
