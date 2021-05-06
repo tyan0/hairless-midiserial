@@ -20,7 +20,7 @@ This fork of Hairless Midiserial Bridge can be built with Qt4 or Qt5.
 
 The Qt package should contain all dependencies, the graphical IDE "Qt Creator" or the program "qmake" can be used to compile the project hairless-midiserial.pro.
 
-On Windows I recommend building with the [MingGW compiler](http://www.mingw.org/). I use MinGW compiler under [MSYS2](https://msys2.github.io/).
+On Windows I recommend building with the [MingGW compiler](https://osdn.net/projects/mingw/). I use MinGW compiler under [MSYS2](https://msys2.github.io/).
 
 To build Hailess MIDI<->Serial Bridge, follow the steps:
 * qmake
