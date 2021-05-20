@@ -1,8 +1,8 @@
 # What is this?
 
-This is a fork from [Hairless MIDI<->Serial Bridge](http://projectgus.github.io/hairless-midiserial/). While the purpose of the original Hairless MIDI<->Serial Bridge is to connect serial devices like Arduinos, this fork aims to connect MIDI sound module such as Roland Sound Canvas seriese and YAMAHA MU seriese via serial port.
+This is a fork from [Hairless MIDI<->Serial Bridge](http://projectgus.github.io/hairless-midiserial/). While the purpose of the original Hairless MIDI<->Serial Bridge is to connect serial devices like Arduinos, this fork aims to connect MIDI sound module such as Roland Sound Canvas series and YAMAHA MU series via serial port.
 
-Roland Sound Canvas seriese and YAMAHA MU seriese support controlling multi-port (16 parts per port) via single serial port connection. So this fork adds support for the multi-port.
+Roland Sound Canvas series and YAMAHA MU series support controlling multi-port (16 parts per port) via single serial port connection. So this fork adds support for the multi-port.
 
 Hairless MIDI<->Serial Bridge assumes to be used with virtual MIDI ports.
 In Windows, you can use [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html) to create virtual MIDI ports.
