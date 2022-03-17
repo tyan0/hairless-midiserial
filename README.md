@@ -26,6 +26,9 @@ To build Hailess MIDI<->Serial Bridge, follow the steps:
 * qmake
 * make all
 
+## Note for build with Qt4
+When hairless-midiserial is built with Qt4 and gcc version 9 or later, you will have [the problem](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90617) regarding foreach. Please apply [the patch](https://github.com/qt/qtbase/commit/c35a3f519007af44c3b364b9af86f6a336f6411b) to Qt4 header before building the hairless-midiserial.
+
 # Libraries
 
 * [qextserialport](https://code.google.com/p/qextserialport/) is hosted on Github and is linked into the source tree as a git submodule.
